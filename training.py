@@ -6,10 +6,13 @@ with open('data/driving_log.csv') as f:
     reader = csv.reader(f)
     lines = [line for line in reader]
 
+correction = 0.2 # this is a parameter to tune
+
 # original data
-images = [cv2.imread(line[0]) for line in lines]
-measurements = [float(line[3]) for line in lines]
+images = [cv2.imread(line[0]) for line in lines] + [cv2.imread(line[1]) for line in lines] + [cv2.imread(line[2]) for line in lines]
+measurements = [float(line[3]) for line in lines] + [float(line[3])+correction for line in lines] + [float(line[3])+correction for line in lines]
 cv2.imwrite('orig.png', images[-1])
+
 # column flipped data
 images = images + [cv2.flip(image, 1) for image in images]
 measurements = measurements + [-x for x in measurements]
@@ -32,6 +35,8 @@ model.add(MaxPooling2D())
 model.add(Convolution2D(6,5,5,activation="relu"))
 model.add(MaxPooling2D())
 model.add(Flatten())
+model.add(Dense(120))
+model.add(Dense(84))
 model.add(Dense(1))
 plot_model(model, to_file='model.png', show_shapes=True)
 
