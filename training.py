@@ -10,7 +10,7 @@ correction = 0.2 # this is a parameter to tune
 
 # original data
 images = [cv2.imread(line[0]) for line in lines] + [cv2.imread(line[1]) for line in lines] + [cv2.imread(line[2]) for line in lines]
-measurements = [float(line[3]) for line in lines] + [float(line[3])+correction for line in lines] + [float(line[3])+correction for line in lines]
+measurements = [float(line[3]) for line in lines] + [float(line[3])+correction for line in lines] + [float(line[3])-correction for line in lines]
 cv2.imwrite('orig.png', images[-1])
 
 # column flipped data
@@ -23,12 +23,13 @@ y_train = np.array(measurements)
 
 from keras.utils import plot_model
 from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda
+from keras.layers import Flatten, Dense, Lambda, Cropping2D
 from keras.layers.convolutional import Convolution2D
 from keras.layers.pooling import MaxPooling2D
 
 
 model = Sequential()
+model.add(Cropping2D(cropping=((75,25), (0,0)), input_shape=(160,320,3)))
 model.add(Lambda(lambda x: x / 255. - 0.5, input_shape=(160,320,3)))
 model.add(Convolution2D(6,5,5,activation="relu"))
 model.add(MaxPooling2D())
