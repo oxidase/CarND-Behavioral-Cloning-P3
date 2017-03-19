@@ -6,12 +6,17 @@ with open('data/driving_log.csv') as f:
     reader = csv.reader(f)
     lines = [line for line in reader]
 
+# original data
 images = [cv2.imread(line[0]) for line in lines]
-measurements = [line[3] for line in lines]
+measurements = [float(line[3]) for line in lines]
+cv2.imwrite('orig.png', images[-1])
+# column flipped data
+images = images + [cv2.flip(image, 1) for image in images]
+measurements = measurements + [-x for x in measurements]
+cv2.imwrite('flip.png', images[-1])
 
 X_train = np.array(images)
 y_train = np.array(measurements)
-print(measurements)
 
 from keras.utils import plot_model
 from keras.models import Sequential
