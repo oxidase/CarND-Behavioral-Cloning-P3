@@ -120,6 +120,8 @@ if __name__ == '__main__':
               ', but the model was built using ', model_version)
 
     model = load_model(args.model)
+    pre_load = float(model.predict(np.zeros((1, 160, 320, 3)), batch_size=1))
+    print (pre_load)
 
     if args.image_folder != '':
         print("Creating image folder at {}".format(args.image_folder))
